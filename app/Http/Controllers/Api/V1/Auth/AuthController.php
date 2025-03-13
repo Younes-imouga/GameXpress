@@ -55,5 +55,47 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public fun
+    public function login(Request $request){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'The email field is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 6 characters.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $validatedData = $validator->validated();
+
+        if(!auth()->attempt($validatedData)){
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $token = auth()->user()->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User logged in successfully',
+            'user' => auth()->user(),
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
+    }
+
+    public function logout(Request $request){
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'User logged out successfully'
+        ], 200);
+    }
 }
