@@ -4,98 +4,80 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ], [
-            'name.required' => 'The name field is required.',
-            'email.required' => 'The email field is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'password.required' => 'The password field is required.',
-            'password.min' => 'The password must be at least 6 characters.',
+    public function register(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+            'role' => ['required', 'string', 'exists:roles,name']
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $validatedData = $validator->validated();
-
-
-        if(User::where('email', $validatedData['email'])->exists()){
-            return response()->json([
-                'message' => 'Email already exists'
-            ], 400);
-        }
 
         $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
+
+        // Assign the role to the user
+        $user->assignRole($request->role);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-
         return response()->json([
+            'status' => 'success',
             'message' => 'User registered successfully',
-            'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
+            'data' => [
+                'user' => $user->load('roles'),
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]
         ], 201);
     }
 
-    public function login(Request $request){
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ], [
-            'email.required' => 'The email field is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'password.required' => 'The password field is required.',
-            'password.min' => 'The password must be at least 6 characters.',
+    public function login(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
-            ], 422);
-        }
+        $user = User::where('email', $request->email)->first();
 
-        $validatedData = $validator->validated();
-
-        if(!auth()->attempt($validatedData)){
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
+                'status' => 'error',
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
-        $token = auth()->user()->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User logged in successfully',
-            'user' => auth()->user(),
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
+            'status' => 'success',
+            'message' => 'Logged in successfully',
+            'data' => [
+                'user' => $user->load('roles'),
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]
+        ]);
     }
 
-    public function logout(Request $request){
-        $request->user()->tokens()->delete();
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'User logged out successfully'
-        ], 200);
+            'status' => 'success',
+            'message' => 'Successfully logged out'
+        ]);
     }
 }

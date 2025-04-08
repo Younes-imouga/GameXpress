@@ -156,18 +156,18 @@ L'API suit une architecture **RESTful** avec :
 ✅ Développement des **endpoints produits**  
 ✅ Écriture des **tests unitaires**  
 
-### 📆 **Jour 4**
+### 📆 **Jour 4** 
 ✅ Développement des **endpoints catégories **  
 ✅ Écriture des **tests unitaires**  
 
 ### 📆 **Jour 5**
 ✅ Développement des **endpoints catégories & utilisateurs**  
-✅ Développement des **endpoints utilisateurs**  
+✅ Développement des **endpoints utilisateurs**
 ✅ Finalisation des **tests et documentation API**  
 
 ### 📤 Exporter les Endpoints
 1. Ouvrez **Postman**
-2. Sélectionnez la **collection** contenant vos endpoints
+2. Sélectio nnez la **collection** contenant vos endpoints
 3. Cliquez sur les trois points **(...)** puis sur **Exporter**
 4. Choisissez le format **JSON** et cliquez sur **Exporter**
 5. Enregistrez le fichier pour le partager ou le rendue
