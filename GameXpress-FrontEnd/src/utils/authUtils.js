@@ -94,7 +94,6 @@ export const useAuth = () => {
         setLoading(true);
         const currentToken = localStorage.getItem('token');
 
-
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('permissions');
@@ -102,18 +101,6 @@ export const useAuth = () => {
         setUser(null);
         setPermissions([]);
 
-
-
-
-
-
-
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-
-
-
-        console.log("Redirecting to /login after delay");
         window.location.replace('/login');
 
     }, [axiosInstance]);

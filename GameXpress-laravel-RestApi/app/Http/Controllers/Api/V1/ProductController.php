@@ -14,11 +14,13 @@ class ProductController extends Controller
     public function index(){
         // all products
         if (auth('sanctum') -> user() -> can('view_products')){
-            $products = Product::all();
-        return response() -> json([
-           "products" => $products,
-           "out Of stock" => Product::where('stock',0) -> get()
-        ],200);
+            //get the foreign item category with the product
+            $products = Product::where('stock', '>', 0)-> get()->load('category');
+            $outOfStockProducts = Product::where('stock',0)-> get()->load('category');
+            return response() -> json([
+            "products" => $products,
+            "out Of stock" => $outOfStockProducts,
+            ],200);
         }
         return response() -> json(["message" => "failed to get all products"],403);
     }
@@ -155,7 +157,19 @@ class ProductController extends Controller
         ],200);
     }
     // delete a product 
-    public function destroy(Product $product){
+    public function destroy($id){
+        $product = Product::find($id);
+        if (!$product){
+            return response() -> json([
+                "message" => "product not found"
+            ],404);
+        }
+        foreach($product->images as $image) {
+            if (file_exists(storage_path('app/public/' . $image->image_url))) {
+                unlink(storage_path('app/public/' . $image->image_url));
+            }
+            $image->delete();
+        }
         $product -> delete();
         return response() -> json([
             "message" => "product has been deleted successfullly"

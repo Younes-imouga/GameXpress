@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use App\Notifications\StockNotifications;
@@ -16,11 +17,13 @@ class DashboardController extends Controller
                 $countProducts = Product::count('id');
                 $availableProducts = Product::where('status','available') -> count();
                 $total_users = User::count('id');
+                $categoryCount = Category::count('id');
                 return [
                     "message" => "welcome to dashboard admin",
                     "product_count" => $countProducts,
                     "available_products" => $availableProducts,
-                    "total_users" => $total_users
+                    "total_users" => $total_users,
+                    "category_count" => $categoryCount,
                 ];  
             }
             return ["message" => "you're not an admin"];

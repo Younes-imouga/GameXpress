@@ -27,7 +27,8 @@ function Header() {
               {role === 'super_admin' && (
                 <>
                   <NavLink to="/admin/dashboard" className={navLinkClass}>Admin Dash</NavLink>
-                  <NavLink to="/games" className={navLinkClass}>Games</NavLink>
+                  <NavLink to="/admin/products" className={navLinkClass}>Products</NavLink>
+                  <NavLink to="/admin/categories" className={navLinkClass}>Categories</NavLink>
                 </>
               )}
               {role === 'product_manager' && (

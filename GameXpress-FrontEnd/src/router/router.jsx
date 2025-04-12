@@ -11,6 +11,11 @@ import { useAuth } from "../utils/authUtils";
 import ForbiddenPage from "../components/ForbiddenPage.jsx";
 import NotFoundPage from "../components/NotFoundPage.jsx";
 
+import AdminDashboard from "../components/admin/AdminDashboard.jsx";
+import ProductsPage from "../components/admin/ProductsPage.jsx";
+import CategoriesPage from "../components/admin/CategoriesPage.jsx";
+import AddProduct from "../components/admin/AddProduct.jsx";
+
 
 const IndexRedirect = () => {
     const { user } = useAuth();
@@ -30,7 +35,6 @@ const ClientDashboard = () => <div>Client Dashboard (Requires: client)</div>;
 const GamesPage = () => <div>Games Page (Requires: product_manager, super_admin)</div>;
 const StorePage = () => <div>Store Page (Requires: client, product_manager, super_admin)</div>;
 const ContactPage = () => <div>Contact Page (Public within Layout)</div>;
-const AdminDashboard = () => <div>Admin Dashboard (Requires: super_admin)</div>;
 const UserDashboard = () => <div>User Manager Dashboard (Requires: user_manager)</div>;
 
 export const router = createBrowserRouter([
@@ -77,8 +81,15 @@ export const router = createBrowserRouter([
                 element: <ProtectedRoute allowedRoles={['product_manager', 'super_admin']} />,
                 children: [
                     {
-                        path: "games",
-                        element: <GamesPage />,
+                        path: "admin/products",
+                        element: <ProductsPage />,
+                    },
+                    { 
+                        path: "admin/categories", 
+                        element: <CategoriesPage /> 
+                    },                    { 
+                        path: "admin/products/create", 
+                        element: <AddProduct /> 
                     },
 
                 ]
@@ -104,6 +115,7 @@ export const router = createBrowserRouter([
                     {
                         path: "admin/dashboard",
                         element: <AdminDashboard />,
+                        // element: <>test</>
                     },
 
                 ]
