@@ -108,9 +108,9 @@ function ProductsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{product.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          {product.image_url ? (
+                          {product.images[0]?.image_url ? (
                             <img 
-                              src={product.image_url} 
+                              src={import.meta.env.VITE_API_IMAGE_URL + product.images[0]?.image_url} 
                               alt={product.name} 
                               className="h-10 w-10 rounded-full mr-3 object-cover"
                             />

@@ -15,8 +15,8 @@ class ProductController extends Controller
         // all products
         if (auth('sanctum') -> user() -> can('view_products')){
             //get the foreign item category with the product
-            $products = Product::where('stock', '>', 0)-> get()->load('category');
-            $outOfStockProducts = Product::where('stock',0)-> get()->load('category');
+            $products = Product::where('stock', '>', 0)-> get()->load('category')->load('images');
+            $outOfStockProducts = Product::where('stock',0)-> get()->load('category')->load('images');
             return response() -> json([
             "products" => $products,
             "out Of stock" => $outOfStockProducts,
@@ -25,9 +25,15 @@ class ProductController extends Controller
         return response() -> json(["message" => "failed to get all products"],403);
     }
     // show a specific prouct
-    public function show(Product $product){
-        if (auth('sanctum')-> user() -> can('view_products')){
+    public function show($id){
+        $product = Product::where('id',$id)-> get()->load('category')->load('images');
+        if ($product -> isEmpty()){
+            return response() -> json([
+                "message" => "product not found"
+            ],404);
+        }
 
+        if (auth('sanctum')-> user() -> can('view_products')){
             return response() -> json([
                 "products" => $product,
             ], 200);

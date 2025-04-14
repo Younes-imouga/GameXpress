@@ -27,7 +27,7 @@ Route::get('/v1/admin/dashboard',[DashboardController::class, 'index'])
 // product managers routes
 Route::middleware(['auth:sanctum','role:product_manager|super_admin']) -> group(function (){
     Route::get('/v1/admin/products',[ProductController::class, 'index']);
-    Route::get('/v1/admin/products/{product}',[ProductController::class, 'show']);
+    Route::get('/v1/admin/products/{id}',[ProductController::class, 'show']);
     Route::post('/v1/admin/products',[ProductController::class,'store']);
     Route::put('/v1/admin/products/{product}',[ProductController::class,'update']);
     Route::delete('/v1/admin/products/{id}',[ProductController::class, 'destroy']);

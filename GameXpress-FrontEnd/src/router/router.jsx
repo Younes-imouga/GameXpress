@@ -15,6 +15,7 @@ import AdminDashboard from "../components/admin/AdminDashboard.jsx";
 import ProductsPage from "../components/admin/ProductsPage.jsx";
 import CategoriesPage from "../components/admin/CategoriesPage.jsx";
 import AddProduct from "../components/admin/AddProduct.jsx";
+import EditProduct from "../components/admin/EditProduct.jsx";
 
 
 const IndexRedirect = () => {
@@ -87,11 +88,15 @@ export const router = createBrowserRouter([
                     { 
                         path: "admin/categories", 
                         element: <CategoriesPage /> 
-                    },                    { 
+                    },
+                    { 
                         path: "admin/products/create", 
                         element: <AddProduct /> 
                     },
-
+                    {
+                        path: "admin/products/:id/edit",
+                        element: <EditProduct />
+                    },
                 ]
             },
 
